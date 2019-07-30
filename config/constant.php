@@ -1,0 +1,4 @@
+<?php
+
+//PAGINATION LIMIT START HERE
+define('USER_TYPE', 2); 

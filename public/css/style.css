@@ -1,0 +1,99 @@
+
+
+/*---add member----*/
+.main_box {
+  background: #fff;
+  box-shadow: 0 0px 3px rgba(0,0,0,0.4);
+}
+.btn-bs-file input[type="file"] 
+{
+    cursor: inherit;
+    height: 0;
+    opacity: 0;
+    outline: medium none;
+    position: absolute;
+    width: 0;
+}
+
+.plain-select
+ {
+  display: inline-block;
+  vertical-align: middle;
+  position: relative;
+  width: 100%;
+}
+
+.plain-select select {
+  line-height: normal;
+  height: 44px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  appearance: none;
+  width: 200px;
+  border-radius: 6px;
+  display: block;
+  width: 100%;
+  border: 1px solid #c8c8c8;
+  background: #fff;
+  padding: 8px 20px 7px 10px;
+  margin: 0;
+  line-height: normal;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
+  color: #9F9F9F;
+}
+.plain-select::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  right: 14px;
+  top: 40%;
+  margin-top: -3px;
+  pointer-events: none;
+  border: solid black;
+  border-width: 0 3px 3px 0;
+  display: inline-block;
+      width: 12px;
+    height: 12px;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+}
+
+.main_box label
+ {
+  font-size: 14px;
+  color: #15989d;
+}
+.vehicle_info {
+  margin-top: 50px;
+}
+
+.main_box h4{margin: 28px 0;}
+.main_box h3 {
+  margin-bottom: 0;
+}
+.vehicle_info
+ {
+  margin-top: 50px !important;
+}
+.drag img {
+  width: 100%;
+}
+
+.family_num {
+  color: #158585;
+  float: right;
+  font-size: 16px;
+}
+.family_num i {
+  font-size: 35px;
+  margin-right: 10px;
+  vertical-align: middle;
+}
+/*---end----*/
+
+@media screen and (max-width:1200px){
+
+}
