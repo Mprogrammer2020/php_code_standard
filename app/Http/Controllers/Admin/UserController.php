@@ -34,7 +34,7 @@ class UserController extends Controller
             if (Auth::attempt($userDetail)) {
             		$user_name = Auth::user()->name;
             		Session::put('user_name', $user_name );
-                 return view('admin.dashboard.index');                
+                   return redirect()->route('admin.userlist');               
             } else {
 
                 Session::flash ( 'message', "Invalid Credentials , Please try again." );
@@ -62,12 +62,11 @@ class UserController extends Controller
     }
     public function update(Request $request)
     {
-    	$postData = $request->all();
-    	// print_r($postData);die();
+    	$postData = $request->all(); 
     	$validator = Validator::make($postData, [
             'name' => 'required',
             'email' => 'required',
-            'phone' => 'required',
+            'phone_no' => 'required',
         ]);
     	if ($validator->fails()) {
             return redirect::back()
@@ -76,15 +75,15 @@ class UserController extends Controller
         }
         $postData['id'] = Auth::id();
         $data = Users::ProfileUpdate($postData);
-
         if($data){
         	Session::flash ( 'message', "Your Profile Updated Successfully" );
-        	return redirect('admin/dashboard');
+        	return redirect()->back();
         }
     }
 
     public function Allusers(){
-    	 $data['allusers'] = Users::Allusers();
+    	 $data['CountallUsers'] = Users::countAllUsers();
+         $data['allusers'] = Users::Allusers();
     	 return view('admin.dashboard.index',$data);
     }
 

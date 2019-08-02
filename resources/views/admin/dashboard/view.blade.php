@@ -28,17 +28,17 @@
 							<div class="col-md-9">
 								<div class="form-group">
 								    <label>Email</label>
-								    <input type="text" name="email" id="email" tabindex="1" class="form-control lettersonlys" placeholder="Enter  email " value="{{ Auth::user()->email }}">
-								    <span class="error">{{ $errors->first('name') }}</span>
+								    <input type="text" name="email" id="email" tabindex="1" class="form-control lettersonlys" placeholder="Enter  Email Id" value="{{ Auth::user()->email }}">
+								    <span class="error">{{ $errors->first('email') }}</span>
 								</div>
 							</div>
-							<!-- <div class="col-md-9">
+							<div class="col-md-9">
 								<div class="form-group">
-								    <label>NAME</label>
-								    <input type="text" name="name" id="username" tabindex="1" class="form-control lettersonlys" placeholder="Enter Member Name" value="{{ Auth::user()->name }}">
-								    <span class="error">{{ $errors->first('name') }}</span>
+								    <label>Contact no.</label>
+								    <input type="text" name="phone_no" id="phone_no" tabindex="1" class="form-control lettersonlys" placeholder="Enter Phone No." value="{{ Auth::user()->phone }}">
+								    <span class="error">{{ $errors->first('phone') }}</span>
 								</div>
-							</div> -->
+							</div>
 							<div class="col-md-9">
 							 	<button type="submit" name ="submit" class="grad_btn">Update</button>
 							</div>

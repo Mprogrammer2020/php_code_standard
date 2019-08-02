@@ -13,11 +13,20 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+/*Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});*/
+Route::group(['middleware' => 'auth:api'], function(){
+
+	Route::post('allusers', 'Api\UserController@Allusers')->name('allusers');
+	Route::post('profile', 'Api\UserController@MyProfile')->name('profile');
+	Route::post('viewUser', 'Api\UserController@viewUser')->name('viewUser');
+	Route::post('delete', 'Api\UserController@deleteUser')->name('delete');
+	Route::post('update', 'Api\UserController@profileUpdate')->name('update');
+	Route::post('logout', 'Api\UserController@logout')->name('logout');
 });
-Route::post('login', 'Api\AdminController@login')->name('login');
-Route::post('allusers', 'Api\AdminController@Allusers')->name('allusers');
-Route::post('profile', 'Api\AdminController@MyProfile')->name('profile');
-Route::post('viewUser', 'Api\AdminController@viewUser')->name('viewUser');
-Route::post('delete', 'Api\AdminController@deleteUser')->name('delete');
+Route::post('login', 'Api\UserController@login')->name('login');
+	Route::post('register', 'Api\UserController@register')->name('register');
+
+Route::post('changepassword', 'Api\UserController@changePassword')->name('changepassword');
+
