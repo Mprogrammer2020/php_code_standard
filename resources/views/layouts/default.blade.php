@@ -27,32 +27,13 @@
         <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
         <script src="{{ asset('public/js/jquery-2.2.0.min.js') }}"></script>
         <script src="{{ asset('public/js/bootstrap.min.js') }}"></script>
-      <script src="{{ asset('public/js/bootstrap-datepicker.min.js') }}"></script> 
-
         <script src="{{ asset('public/js/moment.min.js') }}"></script>
-        <script src="{{ asset('public/js/bootstrap-datetimepicker.min.js') }}"></script>
-
         <script src="{{ asset('public/js/main.js') }}"></script>
         <script src="{{ asset('public/js/highcharts.js') }}"></script>
         <script src="{{ asset('public/js/jquery.validate.js') }}"></script>    
         <script src="{{ asset('public/js/sweetalert.min.js') }}"></script>  
-        <script src="{{ asset('public/js/select2.min.js') }}"></script>  
-        <script src="{{ asset('public/js/autosize.min.js') }}"></script>  
-         
-        <!--Custom JS Start Here -->
-        <script src="{{ asset('public/js/common.js') }}"></script>
-        <script src="{{ asset('public/js/form_validation.js') }}"></script>
-        <script src="{{ asset('public/js/building.js') }}"></script>
-        <script src="{{ asset('public/js/members.js') }}"></script>
-        <script src="{{ asset('public/js/billing.js') }}"></script>
-        <script src="{{ asset('public/js/complaint.js') }}"></script>
-        <script src="{{ asset('public/js/staff.js') }}"></script>
-        <script src="{{ asset('public/js/notices.js') }}"></script>
-        <script src="{{ asset('public/js/defaulter.js') }}"></script>
-        <script src="{{ asset('public/js/gatekeeper.js') }}"></script>
-        <script src="{{ asset('public/js/dashboard.js') }}"></script>
-        <script src="{{ asset('public/js/visitor.js') }}"></script>
-        <script src="{{ asset('public/js/alert.js') }}"></script>
+        <script src="{{ asset('/public/js/common_file.js') }}"></script>
+        <script src="{{ asset('public/js/form_validation.js') }}"></script> 
         <script>
             var csrf_token = $('meta[name="csrf-token"]').attr('content');
             var camera_icon = "{{ asset('public/images/icons/camera.png') }}";            

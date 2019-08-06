@@ -22,7 +22,7 @@
 											<input type="password" name="password" class="form-control" placeholder="Enter your password">
 											<span class="error">{{ $errors->first('password') }}</span>
 										</div>	
-										<p class="text-right"><a href="">Forgot Password ?</a></p>               
+										<!-- <p class="text-right"><a href="">Forgot Password ?</a></p> -->               
 		         <button type="submit" class="grad_btn"> Login </button>
 				</form>
 				<!--<a href="#" class="grad_btn" >Forgot Password</a>-->

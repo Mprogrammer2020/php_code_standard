@@ -3,7 +3,7 @@
 			<nav>
 				<ul>
 					<li class="active">
-						<a href="#" class="active">
+						<a href="{{ route('home')}}" class="active">
 							<span class="icon"><img src="{{asset('public/images/icons/home_icon.png') }}"></span>
 							<span>Home</span>
 						</a>

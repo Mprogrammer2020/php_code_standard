@@ -9,6 +9,7 @@ use Auth;
 use Redirect;
 use App\Models\Users;
 use Hash;
+use Mail;
 
 class UserController extends Controller
 {
@@ -207,9 +208,7 @@ class UserController extends Controller
         }
         // Uploade Image for user
         if(isset($postData['profile_pic'])) {   
-            $postData['profile_pic'] = Users::upload_profile($postData['profile_pic'], $this->uploadUserProfilePath);
-              /*$removePath = strpos($postData['profile_pic'],"/",1);
-              $postData['profile_name'] = substr($postData['profile_pic'], $removePath+14);*/
+            $postData['profile_pic'] = Users::upload_profile($postData['profile_pic'], $this->uploadUserProfilePath); 
         }
         // save in database
         $postData['id'] = $user_id;
@@ -259,4 +258,71 @@ class UserController extends Controller
         }
         return response()->json($response);        
     }
+
+
+
+    public function createToken(Request $request) {
+
+        $postData = $request->all();
+        $validator = Validator::make($postData, [
+                'email' => 'email|required', 
+        ]);
+        if ($validator->fails()) {
+            $response['message'] = $validator->errors()->first();
+            return response()->json($response);
+        }
+
+        $user = Users::where('email', $postData['email'])->first(); 
+
+        if($user){
+            
+            $postData['token'] = rand(1,999999); 
+            $user->token = $postData['token']; 
+            if($user->save()) { 
+                $data = emailSend($postData);
+                if($data){
+                    $response['status'] = true;
+                    $response['success'] = 'Reset password email sent successfully on your email account.';
+                } else {
+                   $response['status'] = false;
+                   $response['success'] = 'Something went to wrong';
+                }
+           }            
+        }
+        return response()->json($response);
+    }    
+     
+    function verifytoken(Request $request) {
+
+        $response['status'] = false;
+        $postData = $request->all();
+          $validator = Validator::make($postData, [ 
+            'old_password' => 'required',
+            'new_password' => 'required|string|min:6',
+            'confirm_password'=>'required|min:6|same:new_password' 
+        ]);
+
+
+        if ($validator->fails()) {
+            $response['message'] = $validator->errors()->first();
+            return response()->json($response);
+        }
+
+        $user = Users::where('email', $postData['email'])->first(); 
+        if($postData['old_password'] == $user['token']) {
+
+            $user['password'] = Hash::make($postData['new_password']);
+            $data = Users::changePassword($user);
+            if($data){ 
+                $response['message'] = 'Your Password Reset Successfully';
+            } else { 
+                $response['message'] = 'Somthing went worng!';
+            }
+        } else {
+            
+            $response['message'] = 'Your OTP is expired';
+        }
+        return response()->json($response);
+    }
+
 }

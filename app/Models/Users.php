@@ -11,16 +11,24 @@ class Users extends Model
 
     // Update profile for admin
     public static function ProfileUpdate($data){
-    	//print_r($data);die();
     	$user = Users::find($data['id']);
     	$user->name = $data['name'];
     	$user->email = $data['email'];
     	$user->phone = $data['phone_no'];
+        if(isset($data['profile_pic'])) {
+            $user->profile_pic = $data['profile_pic'];
+        }
     	return $user->save();
     }
 
-    public static function Allusers(){
-    	return $data = Users::where('user_type',USER_TYPE)->get()->toArray();
+    public static function Allusers($data){
+    	$query = Users::select('users.id','users.name','users.email','users.phone','users.created_at')
+           ->where('user_type',USER_TYPE);
+           if(isset($data['search'])){
+             $query->where('name', 'like', '%'. $data['search']. '%');
+           }
+        return $query->orderBy('users.id', 'DESC')
+                ->paginate($data['per_page_limit']);
     }
 
     public static function countAllUsers(){
@@ -63,5 +71,23 @@ class Users extends Model
         $user = Users::find($data['id']);
         $user->password = $data['password'];
         return $user->save();
+    }
+
+    public static function SaveToekn($data){
+        
+        $tokenSave = Users::where('email',$data['email']);
+        $tokenSave->token = $data['token'];
+        return $tokenSave->save();
+    }
+
+    public static function view_limit()  {
+        return [ '5' => '5',
+                 '10' => '10',
+                  '25' => '25',  
+                  '50' => '50',  
+                  '100' => '100',  
+                  '200' => '200',  
+                  '500' => '500'
+            ];        
     }
 }

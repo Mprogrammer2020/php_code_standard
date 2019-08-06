@@ -12,6 +12,7 @@ use App\Models\Users;
 
 class UserController extends Controller
 {
+    public $uploadUserPath ='public/images/users';
     public function index()
     {
     	return view('admin.user.login');
@@ -65,7 +66,7 @@ class UserController extends Controller
     	$postData = $request->all(); 
     	$validator = Validator::make($postData, [
             'name' => 'required',
-            'email' => 'required',
+            'email' => 'required|email|unique:users,email,'.Auth::user()->id.',id,deleted_at,NULL',
             'phone_no' => 'required',
         ]);
     	if ($validator->fails()) {
@@ -73,6 +74,9 @@ class UserController extends Controller
                         ->withErrors($validator)
                         ->withInput();
         }
+        if(isset($postData['user_img'])) {   
+            $postData['profile_pic'] = Users::upload_profile($postData['user_img'], $this->uploadUserPath);
+        }  
         $postData['id'] = Auth::id();
         $data = Users::ProfileUpdate($postData);
         if($data){
@@ -81,18 +85,30 @@ class UserController extends Controller
         }
     }
 
-    public function Allusers(){
-    	 $data['CountallUsers'] = Users::countAllUsers();
-         $data['allusers'] = Users::Allusers();
-    	 return view('admin.dashboard.index',$data);
+    public function Allusers(Request $request){
+    	$finalViewArray = [];
+        $reqArray['search'] = $request->search;
+        $reqArray['per_page_limit'] = ($request->limit) ?? TABLE_PAGINATE_LIMIT;
+        $finalViewArray['allusers'] = Users::Allusers($reqArray);
+        $finalViewArray['view_limit'] = Users::view_limit($reqArray);
+        $finalViewArray['search'] = $reqArray['search'];      
+        $finalViewArray['per_page_limit']  = $reqArray['per_page_limit']; 
+        
+        if($request->ajax()){
+            return view('admin.dashboard.search_index',['finalViewArray' => $finalViewArray]);
+        } 
+    	return view('admin.dashboard.index',['finalViewArray' => $finalViewArray]);
     }
 
     public function deleteuser($id){
-    	 $data = Users::userDelete($id);
+        $response['status'] = false;
+        $response['message'] = 'Something went wrong.';
+    	$data = Users::userDelete($id);
     	 if($data){
-    	 	Session::flash ( 'message', "User deleted Successfully" );
-        	return redirect('admin/allusers');
+    	 	$response['status'] = true;
+            $response['message'] = 'User deleted successfully.';
     	 }
+        return response()->json($response);
     }
 
     public function userEdit($id)
@@ -121,5 +137,35 @@ class UserController extends Controller
         	Session::flash ( 'message', "User Updated Successfully" );
         	return redirect('admin/allusers');
         }
+    }
+    // Change Password 
+    public function changePassword(Request $request) {       
+            $user = Auth()->user();
+            $validator = Validator::make($request->all(), [
+                'new_password' => 'required|min:6',
+                'confirm_password' => 'required|same:new_password',
+                'old_password' => ['required', function ($attribute, $value, $fail) use ($user) {
+                    if (!\Hash::check($value, $user->password)) {
+                        return $fail(__('The Old password is incorrect.'));
+                    }
+                }]
+            ]);
+
+            if ($validator->fails()) {
+                return redirect::back()
+                            ->withErrors($validator)
+                            ->withInput();
+            }
+
+            $user->password = \Hash::make($request->post('new_password'));
+            if($user->save()) {
+                Session::flash ( 'message', "Your password changed successfully.");
+                Session::flash('alert-class', 'alert-success'); 
+            } else {
+                Session::flash ( 'message', "Something went wrong , Please try again." );
+                Session::flash('alert-class', 'alert-danger'); 
+            } 
+            return redirect()->back();
+        
     }
 }

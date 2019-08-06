@@ -1,4 +1,7 @@
 <?php
 
 //PAGINATION LIMIT START HERE
+define('TABLE_PAGINATE_LIMIT', 5);
+
+// USER TYPE FOR SAVE
 define('USER_TYPE', 2); 

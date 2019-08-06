@@ -24,9 +24,11 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::post('delete', 'Api\UserController@deleteUser')->name('delete');
 	Route::post('update', 'Api\UserController@profileUpdate')->name('update');
 	Route::post('logout', 'Api\UserController@logout')->name('logout');
+	Route::post('changepassword', 'Api\UserController@changePassword')->name('changepassword');
 });
+
 Route::post('login', 'Api\UserController@login')->name('login');
-	Route::post('register', 'Api\UserController@register')->name('register');
-
-Route::post('changepassword', 'Api\UserController@changePassword')->name('changepassword');
-
+Route::post('register', 'Api\UserController@register')->name('register');
+Route::post('reset-password-email', 'Api\UserController@createToken');
+Route::post('verify-password', 'Api\UserController@verifytoken');
+    

@@ -1,6 +1,7 @@
 <!--top header here-->
 	<div class="header">
 		<div class="logo"> 
+			<img src="{{asset('public/images/logo_header_new.png')}}" style=" width:110px; height:40px;">
 		</div>
 		<a href="#" class="nav-trigger"><span></span></a>  
 		<div class="right_profile">
