@@ -20,46 +20,76 @@ class Users extends Model
         }
     	return $user->save();
     }
+    public static function addUser($data){
+        $user = new Users();
+        $user->name = $data['name'];
+        $user->email = $data['email'];
+        $user->password = $data['password'];
+        $user->phone = $data['phone'];
+        $user->created_at = $data['created_at'];
+        $user->user_type = $data['user_type'];
+        if(isset($data['profile_pic'])) {
+            $user->profile_pic = $data['profile_pic'];
+        }
+        return $user->save();
+    }
+    // LIST OF USERS
+    public static function Allusers($data=null){
+    	$query = Users::select('users.id','users.name',
+                            'users.email','users.phone','users.created_at')
+                        ->where('user_type',USER_TYPE);
 
-    public static function Allusers($data){
-    	$query = Users::select('users.id','users.name','users.email','users.phone','users.created_at')
-           ->where('user_type',USER_TYPE);
-           if(isset($data['search'])){
-             $query->where('name', 'like', '%'. $data['search']. '%');
-           }
+        if(isset($data['search'])){
+            $query->where('name', 'like', '%'. $data['search']. '%');
+        }
         return $query->orderBy('users.id', 'DESC')
-                ->paginate($data['per_page_limit']);
+                    ->paginate($data['per_page_limit']);
     }
 
+    // LIST OF USERS API
+    public static function users(){
+        $query = Users::select('users.id','users.name','users.email',
+                                'users.phone','users.created_at')
+                        ->where('user_type',USER_TYPE);            
+        return $query->orderBy('users.id', 'DESC')->get();
+    }
+
+    /* NUMBER OF COUNT USERS */
     public static function countAllUsers(){
         return $data = Users::where('user_type',USER_TYPE)->get()->count();
     }
 
+    /* USER DELETED */
     public static function userDelete($id){
     	$user = Users::find($id);
     	return $user->delete();
     }
 
-    /*Get single user detail*/
+    /* USER VIEW */
     public static function userDetail($id){
-    	return Users::where('id',$id)->first();
+    	return Users::select('id','name','email','user_type','profile_pic',
+                            'phone','device_type','device_token','created_at','updated_at','deleted_at')
+                    ->where('id',$id)
+                    ->first();
     }
 
-    // Update for user 
+    /* USER UPDATE  */
     public static function updateuser($data){ 
     	$user = Users::find($data['id']);
-    	$user->name = $data['name'];
-    	$user->email = $data['email'];
-        $user->phone = $data['phone_no'];
+        if($user) {
+        	$user->name = $data['name'];
+        	$user->email = $data['email'];
+            $user->phone = $data['phone_no'];
 
-            if(isset($data['profile_pic'])){
-                $user->profile_pic = $data['profile_pic'];
-            }
+                if(isset($data['profile_pic'])){
+                    $user->profile_pic = $data['profile_pic'];
+                }
     	
-    	return $user->save();
+    	   return $user->save();
+        }
     }
 
-    //This function used to upload profile pic
+    /*UPLOAD IMAGES OF USERS */
     public static function upload_profile($file, $destinationPath) {
 
         $imgName = $name = time()."_". $file->getClientOriginalName();
@@ -67,27 +97,18 @@ class Users extends Model
         return $path = $destinationPath . '/' . $imgName;
     }
 
+    /*CHANGE PASSWORD OF USER*/
     public static function changePassword($data){
         $user = Users::find($data['id']);
         $user->password = $data['password'];
         return $user->save();
     }
 
+    /*SAVE TOKEN IN TABLE USERS*/
     public static function SaveToekn($data){
         
         $tokenSave = Users::where('email',$data['email']);
         $tokenSave->token = $data['token'];
         return $tokenSave->save();
-    }
-
-    public static function view_limit()  {
-        return [ '5' => '5',
-                 '10' => '10',
-                  '25' => '25',  
-                  '50' => '50',  
-                  '100' => '100',  
-                  '200' => '200',  
-                  '500' => '500'
-            ];        
     }
 }

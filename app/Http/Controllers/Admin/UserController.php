@@ -35,7 +35,7 @@ class UserController extends Controller
             if (Auth::attempt($userDetail)) {
             		$user_name = Auth::user()->name;
             		Session::put('user_name', $user_name );
-                   return redirect()->route('admin.userlist');               
+                   return redirect()->route('home');               
             } else {
 
                 Session::flash ( 'message', "Invalid Credentials , Please try again." );
@@ -90,7 +90,7 @@ class UserController extends Controller
         $reqArray['search'] = $request->search;
         $reqArray['per_page_limit'] = ($request->limit) ?? TABLE_PAGINATE_LIMIT;
         $finalViewArray['allusers'] = Users::Allusers($reqArray);
-        $finalViewArray['view_limit'] = Users::view_limit($reqArray);
+        $finalViewArray['view_limit'] = view_limit($reqArray);
         $finalViewArray['search'] = $reqArray['search'];      
         $finalViewArray['per_page_limit']  = $reqArray['per_page_limit']; 
         
@@ -138,34 +138,35 @@ class UserController extends Controller
         	return redirect('admin/allusers');
         }
     }
+    
     // Change Password 
     public function changePassword(Request $request) {       
-            $user = Auth()->user();
-            $validator = Validator::make($request->all(), [
-                'new_password' => 'required|min:6',
-                'confirm_password' => 'required|same:new_password',
-                'old_password' => ['required', function ($attribute, $value, $fail) use ($user) {
-                    if (!\Hash::check($value, $user->password)) {
-                        return $fail(__('The Old password is incorrect.'));
-                    }
-                }]
-            ]);
+        $user = Auth()->user();
+        $validator = Validator::make($request->all(), [
+            'new_password' => 'required|min:6',
+            'confirm_password' => 'required|same:new_password',
+            'old_password' => ['required', function ($attribute, $value, $fail) use ($user) {
+                if (!\Hash::check($value, $user->password)) {
+                    return $fail(__('The Old password is incorrect.'));
+                }
+            }]
+        ]);
 
-            if ($validator->fails()) {
-                return redirect::back()
-                            ->withErrors($validator)
-                            ->withInput();
-            }
+        if ($validator->fails()) {
+            return redirect::back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
 
-            $user->password = \Hash::make($request->post('new_password'));
-            if($user->save()) {
-                Session::flash ( 'message', "Your password changed successfully.");
-                Session::flash('alert-class', 'alert-success'); 
-            } else {
-                Session::flash ( 'message', "Something went wrong , Please try again." );
-                Session::flash('alert-class', 'alert-danger'); 
-            } 
-            return redirect()->back();
-        
+        $user->password = \Hash::make($request->post('new_password'));
+        if($user->save()) {
+            Session::flash ( 'message', "Your password changed successfully.");
+            Session::flash('alert-class', 'alert-success'); 
+        } else {
+            Session::flash ( 'message', "Something went wrong , Please try again." );
+            Session::flash('alert-class', 'alert-danger'); 
+        } 
+        return redirect()->back();
+    
     }
 }
