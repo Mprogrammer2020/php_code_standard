@@ -110,8 +110,9 @@ class UserController extends Controller
     public  function register(Request $request) {
 
         $response['status'] = false;
+        $response['message'] = "Something went wrong!";
         $postData = $request->all();
-        //$postData['profile_pic'] = '';
+        
         $validator = Validator::make($postData, [
                 'name' => 'required',
                 'email' => 'required|unique:users,email,NULL,id,deleted_at,NULL',
@@ -143,15 +144,12 @@ class UserController extends Controller
        
         $postData['created_at'] = date('Y-m-d h:i:s');
         $postData['password'] = Hash::make($postData['password']);
-        // Save in database 
-        
+        // Save in database         
         $data = Users::insert($postData);
         if($data){
             $response['status'] = true;
-            $response['message'] = 'Registeration Successfull'; 
-        } else {
-            $response['message'] = 'Registration failed! Try again'; 
-        }
+            $response['message'] = 'User registered successfully.'; 
+        } 
         return response()->json($response);
     }
 
@@ -226,16 +224,10 @@ class UserController extends Controller
     public function changePassword(Request $request) { 
 
         $response['status'] = false;
+        $response['message'] = 'Something went wrong! Try again'; 
         $postData = $request->all();
-        $data = Users::userDetail($postData['id']);
-        if (!(Hash::check($request->get('old_password'), $data->password))) {
-            $response['message'] = 'Current password does not match';
-            return response()->json($response);
-        }
-        if(strcmp($request->get('old_password'), $request->get('new_password')) == 0){
-            $response['message'] ='New Password cannot be same as your current password';
-            return response()->json($response);
-        }
+       
+
         $validator = Validator::make($postData,[
             'old_password' => 'required|min:6',
             'new_password' => 'required|string|min:6',
@@ -247,26 +239,42 @@ class UserController extends Controller
             return response()->json($response);
         }
 
+        $data = Users::userDetail($postData['id']);
+
+        if (!(Hash::check($request->get('old_password'), $data->password))) {
+            $response['message'] = 'Current password does not match';
+            return response()->json($response);
+        }
+        
+        if(strcmp($request->get('old_password'), $request->get('new_password')) == 0){
+            $response['message'] ='New Password cannot be same as your current password';
+            return response()->json($response);
+        }
+
+        
+
         $postData['password'] = Hash::make($request->get('new_password'));
         $data = Users::changePassword($postData);
         
         if($data){
             $response['status'] = true;
             $response['message'] = 'Password Changed Successfully.'; 
-        } else {
-            $response['message'] = 'Something went wrong! Try again'; 
         }
+
         return response()->json($response);        
     }
 
 
-
+    //Forgot Password Step 1 API
     public function createToken(Request $request) {
+        $response['status'] = false;
+        $response['message'] = 'Something went wrong!';
 
         $postData = $request->all();
         $validator = Validator::make($postData, [
-                'email' => 'email|required', 
+            'email' => 'email|required', 
         ]);
+
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
             return response()->json($response);
@@ -274,24 +282,27 @@ class UserController extends Controller
 
         $user = Users::where('email', $postData['email'])->first(); 
 
-        if($user){
-            
+        if($user){            
             $postData['token'] = rand(1,999999); 
             $user->token = $postData['token']; 
             if($user->save()) { 
-                $data = emailSend($postData);
-                if($data){
+                $postData['subject'] = "Reset Password by admin-demo"; 
+                $postData['layout'] = 'email_templates.reset_password'; 
+                $mail = emailSend($postData);
+
+                if($mail['status']){
                     $response['status'] = true;
-                    $response['success'] = 'Reset password email sent successfully on your email account.';
+                    $response['message'] = 'Reset password email sent successfully on your email account.';
                 } else {
-                   $response['status'] = false;
-                   $response['success'] = 'Something went to wrong';
+                    $response['message']  = $mail['message'];
                 }
-           }            
+            }            
         }
+
         return response()->json($response);
     }    
      
+    //Forgot Password Step 2 API 
     function verifytoken(Request $request) {
 
         $response['status'] = false;

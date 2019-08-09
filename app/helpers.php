@@ -1,24 +1,22 @@
 <?php
-use Mail; 
 
 function emailSend($postData){ 
+	$response['status'] = false;
+    
 	try{
-		$email =  Mail::send([], $postData, function($message) use ($postData) {
+		$email =  Mail::send($postData['layout'], $postData, function($message) use ($postData) {
 
 			$message->to($postData['email'])
-			        ->subject("Reset Password by admin-demo"); 
-			$message->setbody($postData['token']);
-			$message->from('amanst33@yopmail.com');
+			        ->subject($postData['subject']); 
+			//$message->setbody($postData['token']);
+			$message->from(FROM_EMAIL_ADDRESS);
 		}); 
-		if($email){
-			return false;
-		}else {
-			return true;
-		}
+			
+		$response['message'] = "Mail sent successully.";
+		return $response;
 	}catch(\Execption $e){
         $response['status'] = false;
         $response['message'] = $e->getMessage();
+    	return $response;
     }
-	
 }
- 

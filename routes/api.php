@@ -18,7 +18,7 @@ use Illuminate\Http\Request;
 });*/
 Route::group(['middleware' => 'auth:api'], function(){
 
-	Route::post('allusers', 'Api\UserController@Allusers')->name('allusers');
+	Route::get('allusers', 'Api\UserController@Allusers')->name('allusers');
 	Route::post('profile', 'Api\UserController@MyProfile')->name('profile');
 	Route::post('viewUser', 'Api\UserController@viewUser')->name('viewUser');
 	Route::post('delete', 'Api\UserController@deleteUser')->name('delete');
