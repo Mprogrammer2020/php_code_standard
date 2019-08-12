@@ -95,9 +95,9 @@ class UserController extends Controller
         $finalViewArray['per_page_limit']  = $reqArray['per_page_limit']; 
         
         if($request->ajax()){
-            return view('admin.dashboard.search_index',['finalViewArray' => $finalViewArray]);
+            return view('admin.user.search_index',['finalViewArray' => $finalViewArray]);
         } 
-    	return view('admin.dashboard.index',['finalViewArray' => $finalViewArray]);
+    	return view('admin.user.index',['finalViewArray' => $finalViewArray]);
     }
 
     public function deleteuser($id){
@@ -113,8 +113,11 @@ class UserController extends Controller
 
     public function userEdit($id)
     {
-    	$data['user'] = Users::userDetail($id);    
-    	return view('admin.user.edituser',$data);
+    	$data['user'] = Users::userDetail($id);  
+        if($data['user'])  {
+    	   return view('admin.user.edituser',$data);
+        } 
+        return Redirect::route('admin.userlist');
     }
 
     public function upateuser(Request $request){

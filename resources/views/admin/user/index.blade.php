@@ -1,4 +1,7 @@
-   
+ @extends('layouts.default')
+@section('content')
+ 
+ <div class="main-content"> 
  	<div class="table_box">
  		<div class="header_tb">
 			<div class="row">
@@ -7,12 +10,6 @@
 						<h3>All User</h3>
 					</div>
 				</div>
-			<!-- 
-				<div class="col-md-6 col-sm-5">
-					<div class="text-right">
-						<a href="#" class="btn_add" data-toggle="modal" data-target="#add_new_notices">+ Add New Notice</a>
-					</div>
-				</div> -->
 			</div>
 		    @if(Session::has('message'))
 		        <div class="notification-msg">
@@ -43,8 +40,8 @@
 				<div class="col-md-4 col-sm-4">
 					<div class="text-right">
 						<div class="form-group">
-                       <input type="text" class="form-control search_table" placeholder="Search.." data-url="{{ route('admin.userlist') }}" value="{{ $finalViewArray['search'] }}">
-                  </div>
+                       		<input type="text" class="form-control search_table" placeholder="Search.." data-url="{{ route('admin.userlist') }}" value="{{ $finalViewArray['search'] }}">
+                  		</div>
 					</div>
 				</div>
 			</div>
@@ -71,15 +68,20 @@
 							<td>{{ $userDetail['phone'] }}</td>
 							<td>{{ date('d-m-Y',strtotime($userDetail['created_at'])) }}</td>
 							<td>
-								<a class="view_user" href="{{ route('admin.userView', ['id' => $userDetail['id']] )}}">View</a>
-							</td> 
-							<td>
-								<a class="edit_item" href="{{ route('admin.useredit', ['id' => $userDetail['id']] )}}">
-									Edit
+								<a class="view_user" href="{{ route('admin.userView', ['id' => $userDetail['id']] )}}">
+									<i class="fa fa-eye"></i>
 								</a>
-							</td>
-							<td>
-								<a class="delete_item" onclick="myFunction()" href="{{ route('admin.delete', ['id' => $userDetail['id']] )}}">Delete</a>
+							
+								<a class="edit_item" href="{{ route('admin.useredit', ['id' => $userDetail['id']] )}}">
+									<i class="fa fa-edit"></i>						
+								</a>
+							
+								<a href="javascript:void(0);" class="delete-item"
+								data-delete-title="Once deleted, you will not be able to recover this user!" 
+								data-success-title="Your user has been deleted!" 
+								data-delete-url="{{ route('admin.delete', ['id' => $userDetail['id']] )}}">
+									<i class="fa fa-trash" title="Delete User"></i>
+								</a>
 							</td>
 						 </tr>
 				   		@empty
@@ -91,7 +93,6 @@
 			</table>
 		</div>
 	</div>
-
 	<div class="pagination_box">
 		<div class="pull-left">
 			@if(count($finalViewArray['allusers']) > 0)
@@ -105,4 +106,5 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
-  
+</div> 
+@endsection

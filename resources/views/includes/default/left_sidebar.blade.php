@@ -2,8 +2,8 @@
 		<div class="side-nav">
 			<nav>
 				<ul>
-					<li class="active">
-						<a href="{{ route('home')}}" class="active">
+					<li class="@if(\Request::is('admin/home')) active @endif">
+						<a href="{{ route('dashboard')}}" class="">
 							<span class="icon"><img src="{{asset('public/images/icons/home_icon.png') }}"></span>
 							<span>Home</span>
 						</a>
@@ -14,8 +14,8 @@
 							<span>My Profile</span>
 						</a>
 					</li> -->
-					<li class="active">
-						<a href="{{ route('admin.userlist') }}" class="active">
+					<li class="@if(\Request::is('admin/user/all')) active @endif">
+						<a href="{{ route('admin.userlist') }}" class="">
 							<span class="icon">
 								<img src="{{ asset('public/images/icons/members_icon.png') }}"></span>
 							<span>All Users</span>

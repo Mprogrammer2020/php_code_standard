@@ -1,7 +1,4 @@
- @extends('layouts.default')
-@section('content')
- 
- <div class="main-content"> 
+   
  	<div class="table_box">
  		<div class="header_tb">
 			<div class="row">
@@ -10,12 +7,6 @@
 						<h3>All User</h3>
 					</div>
 				</div>
-				<!-- 
-				<div class="col-md-6 col-sm-5">
-					<div class="text-right">
-						<a href="#" class="btn_add" data-toggle="modal" data-target="#add_new_user">+ Add New User</a>
-					</div>
-				</div> -->
 			</div>
 		    @if(Session::has('message'))
 		        <div class="notification-msg">
@@ -112,5 +103,4 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
-</div> 
-@endsection
+  
