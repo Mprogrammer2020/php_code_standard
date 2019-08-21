@@ -2,7 +2,6 @@
 <?php
 	// This function use  for email send 
 	function emailSend($postData){ 
-		$response['status'] = false;
 	    
 		try{
 			$email =  Mail::send($postData['layout'], $postData, function($message) use ($postData) {
@@ -13,6 +12,7 @@
 				$message->from(FROM_EMAIL_ADDRESS);
 			}); 
 				
+			$response['status'] = true;
 			$response['message'] = "Mail sent successully.";
 			return $response;
 		}catch(\Execption $e){

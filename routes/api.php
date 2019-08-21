@@ -17,18 +17,16 @@ use Illuminate\Http\Request;
     return $request->user();
 });*/
 Route::group(['middleware' => 'auth:api'], function(){
-
-	Route::post('user/list', 'Api\UserController@Allusers')->name('allusers');
-	Route::post('user/update', 'Api\UserController@MyProfile')->name('profile');
-	Route::post('user/view', 'Api\UserController@showProfile')->name('viewUser');
-	Route::post('user/delete', 'Api\UserController@deleteUser')->name('delete');
-	Route::post('user/update', 'Api\UserController@profileUpdate')->name('update');
-	Route::post('user/logout', 'Api\UserController@logout')->name('logout');
-	Route::post('user/change-password', 'Api\UserController@changePassword')->name('changepassword');
+	Route::get('user/list', 'Api\UserController@Allusers');
+	Route::get('user/view', 'Api\UserController@showProfile');
+	Route::post('user/update', 'Api\UserController@profileUpdate');
+	Route::post('user/change-password', 'Api\UserController@changePassword');
+	Route::post('user/delete', 'Api\UserController@deleteUser');
+	Route::get('user/logout', 'Api\UserController@logout');
 });
 
-Route::post('login', 'Api\UserController@login')->name('login');
-Route::post('register', 'Api\UserController@register')->name('register');
-Route::post('reset-password-email', 'Api\UserController@resetPasswordMail');
+Route::post('login', 'Api\UserController@login');
+Route::post('register', 'Api\UserController@register');
+Route::get('reset-password-email', 'Api\UserController@resetPasswordMail');
 Route::post('verify-password', 'Api\UserController@verifyPasswordtoken');
     

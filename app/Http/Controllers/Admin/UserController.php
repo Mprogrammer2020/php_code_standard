@@ -15,7 +15,7 @@ class UserController extends Controller
     public $uploadUserPath ='public/images/users';
     public function index()
     {
-    	return view('admin.user.login');
+    	return view('common.login');
     }
 
     public function checkLogin(Request $request)
@@ -33,9 +33,7 @@ class UserController extends Controller
             } 
             $userDetail = [ 'email' => $request->email , 'password' => $request->password ];
             if (Auth::attempt($userDetail)) {
-            		$user_name = Auth::user()->name;
-            		Session::put('user_name', $user_name );
-                   return redirect()->route('home');               
+            		return redirect()->route('dashboard');               
             } else {
 
                 Session::flash ( 'message', "Invalid Credentials , Please try again." );
@@ -52,13 +50,12 @@ class UserController extends Controller
     }
 
     public function adminview(){ 
-    	return view('admin.dashboard.view');
+    	return view('admin.profile.edit_profile');
     }
 
     public function userView($id)
     {
     	$data['data'] = Users::userDetail($id);
-    	//echo "<pre>";print_r($data);die();
     	return view('admin.user.view',$data);
     }
     public function update(Request $request)
@@ -67,7 +64,7 @@ class UserController extends Controller
     	$validator = Validator::make($postData, [
             'name' => 'required',
             'email' => 'required|email|unique:users,email,'.Auth::user()->id.',id,deleted_at,NULL',
-            'phone_no' => 'required',
+            'phone_no' => 'required:numeric',
         ]);
     	if ($validator->fails()) {
             return redirect::back()
@@ -122,23 +119,24 @@ class UserController extends Controller
 
     public function upateuser(Request $request){
     	$postData = $request->all();
-    	$id =$_GET['id'];
-    	 
+    
     	$validator = Validator::make($postData, [
                 'name' => 'required',
                 'email' => 'required',
-                'phone_no'=>'required',
+                'phone_no'=>'required|numeric',
         ]);
+
         if ($validator->fails()) {
             return redirect::back()
                         ->withErrors($validator)
                         ->withInput();
         } 
-        $postData['id'] = $id;
+       
+    	
         $data = Users::updateuser($postData);
         if ($data) {
         	Session::flash ( 'message', "User Updated Successfully" );
-        	return redirect('admin/allusers');
+        	return redirect()->route('admin.userlist');
         }
     }
     

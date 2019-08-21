@@ -68,7 +68,7 @@ class Users extends Model
     /* USER VIEW */
     public static function userDetail($id){
     	return Users::select('id','name','email','user_type','profile_pic',
-                            'phone','device_type','device_token','created_at','updated_at','deleted_at')
+                            'phone','device_type','device_token','created_at','updated_at')
                     ->where('id',$id)
                     ->first();
     }
@@ -101,6 +101,7 @@ class Users extends Model
     public static function changePassword($data){
         $user = Users::find($data['id']);
         $user->password = $data['password'];
+        $user->token = null;
         return $user->save();
     }
 

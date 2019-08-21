@@ -4,12 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Users;
 use Validator;
 use Auth;
-use Redirect;
-use App\Models\Users;
 use Hash;
-use Mail;
 
 class UserController extends Controller
 {
@@ -18,11 +16,11 @@ class UserController extends Controller
     // LIST OF USERS
     public function Allusers() {
         $response['status'] = false;
-        $response['message'] = "No have users";
+        $response['message'] = "No User found.";
 		$data = Users::users(); 
     	if($data){
     	 	$response['status'] = true;
-    		$response['message'] = 'User found.';
+    		$response['message'] = 'Users found.';
             $response['data'] = $data;
     	} 
 		return response()->json($response);
@@ -33,14 +31,20 @@ class UserController extends Controller
 
     	$response['status'] = false;   	
         $response['message'] = 'User not found.';
-      	$data = Users::userDetail(Auth::id());
-    	if($data){
-    		$user['name'] = $data->name;
-    		$user['email'] = $data->email;
-    		$user['phone'] = $data->phone;
+        $validator = Validator::make($request->all(), [
+                'id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $response['message'] = $validator->errors()->first();
+            return response()->json($response);
+        } 
+
+      	$data = Users::userDetail($request->id);
+    	if($data){    		
     		$response['status'] = true;
             $response['message'] = 'User found.';
-    		$response['data'] = $user;
+    		$response['data'] = $data;
     	}
     	return response()->json($response);
     }
@@ -69,7 +73,7 @@ class UserController extends Controller
                 'email' => 'required|unique:users,email,NULL,id,deleted_at,NULL',
                 'password' => 'required|min:6',
                 'phone'=>'required',
-                'user_type'=> 'required',
+                'user_type'=> 'required|in:2',
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
@@ -123,7 +127,7 @@ class UserController extends Controller
         if (Auth::check()) {
            Auth::user()->token()->revoke();
            $response['status'] = true;
-           $response['message'] = 'Logged out Successfully';
+           $response['message'] = 'User logout Successfully.';
            return response()->json($response); 
         }
        
@@ -135,10 +139,11 @@ class UserController extends Controller
         $response['status'] = false;
         $response['message'] = 'Something went wrong.'; 
         $postData = $request->all();
-        $user_id = Auth::id();
+        $postData['id'] = Auth::id();
+
         $validator = Validator::make($postData, [
                 'name' => 'required',
-                'email' => 'required|unique:users,email,'.$user_id,
+                'email' => 'required|unique:users,email,'.$postData['id'],
                 'phone_no'=>'required',
         ]);
         if ($validator->fails()) {
@@ -149,12 +154,11 @@ class UserController extends Controller
         if(isset($postData['profile_pic'])) {   
             $postData['profile_pic'] = Users::upload_profile($postData['profile_pic'], $this->uploadUserProfilePath); 
         }
-        // save in database
-        $postData['id'] = $user_id;
+        // save in database    
         $data = Users::updateuser($postData);   
          if($data){
             $response['status'] = true;
-            $response['message'] = 'User Updated Successfull'; 
+            $response['message'] = 'User updated successfully.'; 
         }
         return response()->json($response);    
     }
@@ -201,7 +205,7 @@ class UserController extends Controller
     // FORGET PASSWORD STEP-1 API
     public function resetPasswordMail(Request $request) {
         $response['status'] = false;
-        $response['message'] = 'Something went wrong!';
+      
         $postData = $request->all();
         $validator = Validator::make($postData, [
             'email' => 'email|required', 
@@ -213,6 +217,7 @@ class UserController extends Controller
         }
 
         $user = Users::where('email', $postData['email'])->first();
+
         if($user){            
             $postData['token'] = rand(1,999999); 
             $user->token = $postData['token'];
@@ -229,6 +234,8 @@ class UserController extends Controller
                     $response['message']  = $mail['message'];
                 }
             }            
+        } else {
+            $response['message'] = "Email address doesn't exist!"; 
         }
 
         return response()->json($response);
@@ -240,7 +247,8 @@ class UserController extends Controller
         $response['status'] = false;
         $postData = $request->all();
           $validator = Validator::make($postData, [ 
-            'old_password' => 'required',
+            'token' => 'required',
+            'email' => 'required|email',
             'new_password' => 'required|string|min:6',
             'confirm_password'=>'required|min:6|same:new_password' 
         ]);
@@ -251,7 +259,8 @@ class UserController extends Controller
         }
 
         $user = Users::where('email', $postData['email'])->first(); 
-        if($postData['old_password'] == $user['token']) {
+
+        if($postData['token'] == $user['token']) {
 
             $user['password'] = Hash::make($postData['new_password']);
             $data = Users::changePassword($user);
@@ -261,7 +270,7 @@ class UserController extends Controller
                 $response['message'] = 'Somthing went worng!';
             }
         } else {            
-            $response['message'] = 'Your OTP is expired';
+            $response['message'] = 'Your OTP is expired.';
         }
         return response()->json($response);
     }

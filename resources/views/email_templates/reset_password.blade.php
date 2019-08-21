@@ -15,7 +15,7 @@
 							<th colspan="7"><h3>Details</h3></th>
 						</tr>
 						<tr>
-							<th style="width: 137px;">Token</th>
+							<th style="width: 137px;">OTP</th>
 							<td style="width: 137px;">{{  $token }}</td>
 						</tr>
 						
