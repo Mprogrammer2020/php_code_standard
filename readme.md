@@ -1,4 +1,5 @@
-<p align="center"><img src="https://www.netsetsoftware.com/images2/logonetset.png">PHP STANDARD CODE API+ADMIN PANEL
+<p align="center"><img src="https://www.netsetsoftware.com/images2/logonetset.png"></p>
+<h1>PHP STANDARD CODE API+ADMIN PANEL</h1>
 
 <p align="center">
 <a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
